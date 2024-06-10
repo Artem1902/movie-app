@@ -1,0 +1,17 @@
+<div class="movies__container">
+    <h2 class="movies__title">Movies list</h2>
+    <div class="movies__cards">
+        <div *ngFor='let movie of movies'>
+            <app-movie [data]="movie" (addFavorite)="handleAddFavorite($event)"
+                (addWatchList)="handleAddWatchList($event)"></app-movie>
+        </div>
+    </div>
+    <h3 *ngIf="favoritesArr.length > 0">Favorites List</h3>
+    <div *ngFor="let movieName of favoritesArr ">
+        <p>{{ movieName}}</p>
+    </div>
+    <h3 *ngIf="watchingArr.length > 0">Watching List</h3>
+    <div *ngFor="let movieName of watchingArr ">
+        <p>{{ movieName}}</p>
+    </div>
+</div>

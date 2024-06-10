@@ -1,0 +1,29 @@
+<div class="movie__card">
+    <img class="movie__image" [src]="data.poster_path" [alt]="data.title">
+    <div class="movie__body">
+        <div class="movie__content">
+            <h3 class="movie__title">{{data.title}}</h3>
+            <p class="movie__release">Date of release: {{data.release_date}}</p>
+            <p class="movie__rating">Rating: {{data.vote_average}}</p>
+            <p class="movie__descr">{{data.overview}}</p>
+            <p class="movie__age">Age restrictions: {{data.adult ? '18+' : 'none'}}</p>
+            <button class="movie__trailerBtn" (click)="details = !details">{{details ? 'Hide' : 'Watch'}} the movie
+                trailer
+            </button>
+            <div *ngIf="details">
+                <iframe [src]="getSafeUrl(data.video_url)" width="600" height="400" frameborder="0"
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+            </div>
+        </div>
+        <div class="movie__btns">
+            <button class="movie__favBtn" (click)="addToFavorites()" (click)="favorite = !favorite">
+                {{favorite ? '🖤' : '💟'}}
+            </button>
+            <button class="movie__watchBtn" (click)="addToWatchList()" (click)="watchList = !watchList">
+                {{watchList ? '👎' : '👀'}}
+            </button>
+        </div>
+
+    </div>
+</div>

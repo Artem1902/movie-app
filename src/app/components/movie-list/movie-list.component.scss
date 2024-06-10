@@ -1,0 +1,22 @@
+.movies {
+  &__container {
+    max-width: 1265px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    margin: 0 auto;
+  }
+
+  &__title {
+    text-align: center;
+    color: darkblue;
+    font-size: 30px;
+  }
+
+  &__cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 50px;
+  }
+}

@@ -1,0 +1,118 @@
+.movie__card {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  min-height: 100%;
+  row-gap: 16px;
+  border-radius: 10px;
+}
+.movie__image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 270/393;
+  -o-object-fit: cover;
+     object-fit: cover;
+  -o-object-position: top;
+     object-position: top;
+  -webkit-transition: -webkit-transform 0.3s;
+  transition: -webkit-transform 0.3s;
+  transition: transform 0.3s;
+  transition: transform 0.3s, -webkit-transform 0.3s;
+  border-radius: 10px;
+}
+@media (any-hover) {
+  .movie__image:hover {
+    -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+            transform: scale(1.1);
+  }
+}
+.movie__body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  min-height: 100%;
+  padding: 0;
+  margin: 0;
+}
+.movie__content {
+  -webkit-box-align: top;
+      -ms-flex-align: top;
+          align-items: top;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  margin: 0;
+  padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  row-gap: 4px;
+}
+.movie__title {
+  color: chocolate;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.67;
+  letter-spacing: 0.251px;
+  margin: 10px 0 10px 0;
+}
+.movie__release {
+  padding: 0;
+  margin: 10px 0 10px 0;
+}
+.movie__rating {
+  padding: 0;
+  margin: 10px 0 10px 0;
+}
+.movie__descr {
+  padding: 0;
+  margin: 10px 0 10px 0;
+  font-style: italic;
+}
+.movie__age {
+  padding: 0;
+  margin: 10px 0 10px 0;
+}
+.movie__trailerBtn {
+  border-radius: 8px;
+  background: #fff;
+  color: #3c4242;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px 12px;
+  max-width: 220px;
+  -webkit-transition: color 0.5s;
+  transition: color 0.5s;
+}
+@media (any-hover: hover) {
+  .movie__trailerBtn:hover {
+    color: blue;
+  }
+}
+.movie__favBtn {
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 10px;
+  margin-top: 10px;
+}
+.movie__watchBtn {
+  border-radius: 8px;
+  background: #fff;
+  padding: 10px 10px;
+  margin-top: 10px;
+}
