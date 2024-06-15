@@ -1,22 +1,3 @@
-export interface Movie {
-  adult: boolean;
-  backdrop_path: string;
-  genre_ids: number;
-  id: number;
-  original_language: string;
-  original_title: string;
-  overview: string;
-  popularity: number;
-  poster_path: string;
-  release_date: number;
-  title: string;
-  video: boolean;
-  vote_average: number;
-  vote_count: number;
-  video_url: string;
-  favorite: boolean;
-}
-
 export const movies = [
   {
     adult: false,
@@ -36,6 +17,7 @@ export const movies = [
     vote_count: 807,
     video_url: 'https://www.youtube.com/embed/XtFI7SNtVpY',
     favorite: false,
+    isInWatchingList: false,
   },
   {
     adult: false,
@@ -55,6 +37,7 @@ export const movies = [
     vote_count: 1296,
     video_url: 'https://www.youtube.com/embed/aDyQxtg0V2w',
     favorite: false,
+    isInWatchingList: false,
   },
   {
     adult: false,
@@ -74,6 +57,7 @@ export const movies = [
     vote_count: 2519,
     video_url: 'https://www.youtube.com/embed/lV1OOlGwExM',
     favorite: false,
+    isInWatchingList: false,
   },
   {
     adult: true,
@@ -93,5 +77,6 @@ export const movies = [
     vote_count: 341,
     video_url: 'https://www.youtube.com/embed/bvDArsKoTOE',
     favorite: false,
+    isInWatchingList: false,
   },
 ];

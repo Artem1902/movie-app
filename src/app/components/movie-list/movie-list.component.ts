@@ -11,35 +11,29 @@ import { movies } from '../../movies';
   templateUrl: './movie-list.component.html',
   styleUrl: './movie-list.component.scss',
 })
-export class MovieListComponent implements OnInit {
-  movies = [...movies];
-  @Input() data: any;
+export class MovieListComponent {
+  moviesList = movies;
+  favoritesMoviesList: any[] = [];
+  watchingMoviesList: any[] = [];
 
-  public movie: any;
-  ngOnInit() {
-    this.movie = this.data;
+  handleChangeFavorite(data: any) {
+    const newFavoriteMovie = data;
+    if (newFavoriteMovie && newFavoriteMovie.favorite) {
+      this.favoritesMoviesList.push(newFavoriteMovie);
+    } else if (newFavoriteMovie && !newFavoriteMovie.favorite) {
+      this.favoritesMoviesList = this.favoritesMoviesList.filter(
+        (el) => el.id !== newFavoriteMovie.id
+      );
+    } else throw new Error('Error message!');
   }
-
-  favoritesArr: string[] = [];
-  watchingArr: string[] = [];
-
-  handleAddFavorite(movieId: number) {
-    const newFaforiteMovie = this.movies.find((el) => el.id == movieId);
-    if (
-      newFaforiteMovie &&
-      !this.favoritesArr.includes(newFaforiteMovie.title)
-    ) {
-      this.favoritesArr.push(newFaforiteMovie.title);
-    }
-  }
-
-  handleAddWatchList(movieId: number) {
-    const newWatchingMovie = this.movies.find((el) => el.id == movieId);
-    if (
-      newWatchingMovie &&
-      !this.watchingArr.includes(newWatchingMovie.title)
-    ) {
-      this.watchingArr.push(newWatchingMovie.title);
-    }
+  handleChangeWatching(data: any) {
+    const newWatchingMovie = data;
+    if (newWatchingMovie && newWatchingMovie.isInWatchingList) {
+      this.watchingMoviesList.push(newWatchingMovie);
+    } else if (newWatchingMovie && !newWatchingMovie.isInWatchingList) {
+      this.watchingMoviesList = this.watchingMoviesList.filter(
+        (el) => el.id !== newWatchingMovie.id
+      );
+    } else throw new Error('Error message!');
   }
 }
