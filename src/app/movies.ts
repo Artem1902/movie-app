@@ -16,8 +16,6 @@ export const movies = [
     vote_average: 6.932,
     vote_count: 807,
     video_url: 'https://www.youtube.com/embed/XtFI7SNtVpY',
-    favorite: false,
-    isInWatchingList: false,
   },
   {
     adult: false,
@@ -36,8 +34,6 @@ export const movies = [
     vote_average: 7.1,
     vote_count: 1296,
     video_url: 'https://www.youtube.com/embed/aDyQxtg0V2w',
-    favorite: false,
-    isInWatchingList: false,
   },
   {
     adult: false,
@@ -56,8 +52,6 @@ export const movies = [
     vote_average: 7.233,
     vote_count: 2519,
     video_url: 'https://www.youtube.com/embed/lV1OOlGwExM',
-    favorite: false,
-    isInWatchingList: false,
   },
   {
     adult: true,
@@ -76,7 +70,5 @@ export const movies = [
     vote_average: 6.5,
     vote_count: 341,
     video_url: 'https://www.youtube.com/embed/bvDArsKoTOE',
-    favorite: false,
-    isInWatchingList: false,
   },
 ];
