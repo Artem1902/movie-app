@@ -4,23 +4,29 @@
   padding: 0;
   margin: 0;
   border: 0;
-  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
+
 *::before,
 *::after {
   display: inline-block;
 }
+
 a {
   text-decoration: none;
   color: inherit;
   display: inline-block;
 }
+
 li {
   list-style: none;
 }
+
 img {
   vertical-align: top;
 }
+
 h1,
 h2,
 h3,
@@ -30,6 +36,7 @@ h6 {
   font-weight: inherit;
   font-size: inherit;
 }
+
 html,
 body {
   line-height: 1;
@@ -44,38 +51,46 @@ textarea {
   font-size: inherit;
   line-height: inherit;
 }
+
 button {
   color: inherit;
   background-color: transparent;
 }
+
 button,
 select,
 option {
   cursor: pointer;
 }
-input[type="text"],
-input[type="email"],
-input[type="tel"],
+
+input[type=text],
+input[type=email],
+input[type=tel],
 textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
 
-//=================================
-
 .wrapper {
   overflow: clip;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
   min-height: 100%;
 }
 
 .wrapper > main {
-  flex-grow: 1;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
 }
 
-[class*="__container"] {
+[class*=__container] {
   max-width: 1270px;
   margin: 0 auto;
   padding-left: 15px;

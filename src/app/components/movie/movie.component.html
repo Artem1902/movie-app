@@ -1,29 +1,28 @@
-<div class="movie__card">
-    <img class="movie__image" [src]="data.poster_path" [alt]="data.title">
-    <div class="movie__body">
-        <div class="movie__content">
-            <h3 class="movie__title">{{data.title}}</h3>
-            <p class="movie__release">Date of release: {{data.release_date}}</p>
-            <p class="movie__rating">Rating: {{data.vote_average}}</p>
-            <p class="movie__descr">{{data.overview}}</p>
-            <p class="movie__age">Age restrictions: {{data.adult ? '18+' : 'none'}}</p>
-            <button class="movie__trailerBtn" (click)="details = !details">{{details ? 'Hide' : 'Watch'}} the movie
-                trailer
-            </button>
-            <div *ngIf="details">
-                <iframe [src]="getSafeUrl(data.video_url)" width="600" height="400" frameborder="0"
-                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
-            </div>
+<article class="movie-card">
+    <button class="movie-card__favorite" (click)="changeToFavorites()">
+        @if (data.favorite){
+        <img class="movie-card__favImg" src="../../../assets/img/24037-e91e63.svg" alt="Heart">
+        }@else {
+        <img class="movie-card__favImg" src="../../../assets/img/24037.svg" alt="Heart">
+        }
+    </button>
+    <img [src]="data.poster_path" class="movie-card__image" [alt]="data.title">
+    <div class="movie-card__body" [ngClass]="{'movie-card__body--expanded': isMore}">
+        <h4 class=" movie-card__title">
+            {{ data.title | uppercase}} </h4>
+        <button class="movie-card__descriptionBtn" (click)="changeIsMore()">{{isMore ? 'Less...' : 'More...'}}</button>
+        @if (isMore){
+        <div class="movie-card__descriptionText">
+            <p>Age restrictions: {{data.adult ? '18+' : 'none'}}</p>
+            <p>Date of release: {{data.release_date | dateFormat }}</p>
+            <p>{{data.overview}}</p>
         </div>
-        <div class="movie__btns">
-            <button class="movie__favBtn" (click)="addToFavorites()" (click)="favorite = !favorite">
-                {{favorite ? '🖤' : '💟'}}
-            </button>
-            <button class="movie__watchBtn" (click)="addToWatchList()" (click)="watchList = !watchList">
-                {{watchList ? '👎' : '👀'}}
-            </button>
+        }
+        <div class="movie-card__rating">
+            <img class="movie-card__star" src="../../../assets/img/star.png" alt="Star">
+            {{data.vote_average}}
         </div>
-
+        <button class="movie-card__watchList" (click)="changeToWatching()">
+            {{data.isInWatchingList ? 'Added to watch list!': 'Add to watch list +'}}</button>
     </div>
-</div>
+</article>
