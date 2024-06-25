@@ -1,6 +1,6 @@
-<article class="movie-card">
-    <button class="movie-card__favorite" (click)="changeToFavorites()">
-        @if (data.favorite){
+<!-- <article class="movie-card">
+    <button class=" movie-card__favorite" (click)="changeToFavorites()">
+        @if (data.isFavorite){
         <img class="movie-card__favImg" src="../../../assets/img/24037-e91e63.svg" alt="Heart">
         }@else {
         <img class="movie-card__favImg" src="../../../assets/img/24037.svg" alt="Heart">
@@ -8,9 +8,10 @@
     </button>
     <img [src]="data.poster_path" class="movie-card__image" [alt]="data.title">
     <div class="movie-card__body" [ngClass]="{'movie-card__body--expanded': isMore}">
-        <h4 class=" movie-card__title">
-            {{ data.title | uppercase}} </h4>
-        <button class="movie-card__descriptionBtn" (click)="changeIsMore()">{{isMore ? 'Less...' : 'More...'}}</button>
+        <h4 class="movie-card__title">
+            {{ data.title | uppercase}}</h4>
+        <button class=" movie-card__descriptionBtn" (click)="changeIsMore()">{{isMore ? 'Less...' :
+            'More...'}}</button>
         @if (isMore){
         <div class="movie-card__descriptionText">
             <p>Age restrictions: {{data.adult ? '18+' : 'none'}}</p>
@@ -23,6 +24,30 @@
             {{data.vote_average}}
         </div>
         <button class="movie-card__watchList" (click)="changeToWatching()">
-            {{data.isInWatchingList ? 'Added to watch list!': 'Add to watch list +'}}</button>
+            {{data.isInWatchingList ? 'Added to watch list!': 'Add towatchlist+'}}</button>
     </div>
-</article>
+</article> -->
+
+<div class="card flex justify-content-center">
+    <p-card header="{{data.title | uppercase}}" subheader="Rating: {{data.vote_average}}">
+        <ng-template pTemplate="header">
+            <img [alt]="data.title" [src]="data.poster_path" />
+        </ng-template>
+        <div class="p-card-content">
+            <p>
+                {{data.overview}}
+            </p>
+        </div>
+        <ng-template pTemplate="footer">
+            <div class="flex gap-3 mt-1">
+                <p-button (onClick)="changeToFavorites()" [icon]="data.isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"
+                    severity="primary" [raised]="true"
+                    [pTooltip]="data.isFavorite ? 'Delete from favorite' :  'Add to favorite'" tooltipPosition="top" />
+                <p-button (onClick)="changeToWatching()" [icon]="data.isInWatchingList ? 'pi pi-check' : 'pi pi-eye'"
+                    severity="secondary" [raised]="true"
+                    [pTooltip]="data.isInWatchingList ? 'Delete from watch list' : 'Add to watch list'"
+                    tooltipPosition="top" />
+            </div>
+        </ng-template>
+    </p-card>
+</div>

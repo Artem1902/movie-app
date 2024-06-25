@@ -1,5 +1,6 @@
-import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
-import { CommonModule, NgIf } from '@angular/common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { MovieComponent } from '../movie/movie.component';
 
 import { movies } from '../../movies';
@@ -18,22 +19,26 @@ export class MovieListComponent {
 
   handleChangeFavorite(data: any) {
     const newFavoriteMovie = data;
-    if (newFavoriteMovie && newFavoriteMovie.favorite) {
-      this.favoritesMoviesList.push(newFavoriteMovie);
-    } else if (newFavoriteMovie && !newFavoriteMovie.favorite) {
+    const findedMovie = this.favoritesMoviesList.find(
+      (el) => el.id === newFavoriteMovie.id,
+    );
+    if (findedMovie) {
       this.favoritesMoviesList = this.favoritesMoviesList.filter(
-        (el) => el.id !== newFavoriteMovie.id
+        (el) => el.id !== newFavoriteMovie.id,
       );
-    } else throw new Error('Error message!');
+    } else this.favoritesMoviesList.push(newFavoriteMovie);
   }
+
   handleChangeWatching(data: any) {
     const newWatchingMovie = data;
-    if (newWatchingMovie && newWatchingMovie.isInWatchingList) {
-      this.watchingMoviesList.push(newWatchingMovie);
-    } else if (newWatchingMovie && !newWatchingMovie.isInWatchingList) {
+
+    const findedMovie = this.watchingMoviesList.find(
+      (el) => el.id === newWatchingMovie.id,
+    );
+    if (findedMovie) {
       this.watchingMoviesList = this.watchingMoviesList.filter(
-        (el) => el.id !== newWatchingMovie.id
+        (el) => el.id !== newWatchingMovie.id,
       );
-    } else throw new Error('Error message!');
+    } else this.watchingMoviesList.push(newWatchingMovie);
   }
 }
