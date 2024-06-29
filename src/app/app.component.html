@@ -1,11 +1,8 @@
-<div class="wrapper">
-    <app-header></app-header>
-    <main class="page">
-        <div class="page__movies movies">
-            <div class="movies__container">
-                <app-movie-list></app-movie-list>
-            </div>
-        </div>
-    </main>
-    <app-footer></app-footer>
-</div>
+<app-sidebar></app-sidebar>
+<main>
+    <router-outlet></router-outlet>
+    <div class="fav-watch-page">
+        <router-outlet name="header"></router-outlet>
+    </div>
+</main>
+<app-footer></app-footer>

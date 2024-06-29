@@ -1,0 +1,12 @@
+<div class="details-card">
+    <img class="details-card__image" [alt]="findedMovieDetails.title"
+        [src]="'https://image.tmdb.org/t/p/w500/' + findedMovieDetails.poster_path" />
+    <div class="details-card__body">
+        <h4 class="details-card__title">
+            {{ findedMovieDetails.title}}</h4>
+        <p>Rating: {{findedMovieDetails.vote_average}}</p>
+        <p>Age restrictions: {{findedMovieDetails.adult ? '18+' : 'none'}}</p>
+        <p>Date of release: {{findedMovieDetails.release_date}}</p>
+        <p>{{findedMovieDetails.overview}}</p>
+    </div>
+</div>

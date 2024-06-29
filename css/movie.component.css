@@ -8,15 +8,17 @@
 }
 
 :host ::ng-deep .p-button {
-  min-width: 100px;
+  min-width: 75px;
 }
 
 :host ::ng-deep .p-card-title {
   color: cornflowerblue;
+  font-size: 18px;
 }
 
 :host ::ng-deep .p-card-subtitle {
   color: yellowgreen;
+  font-size: 14px;
 }
 
 :host ::ng-deep .p-card .p-card-content {

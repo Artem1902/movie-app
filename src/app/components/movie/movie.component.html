@@ -31,12 +31,11 @@
 <div class="card flex justify-content-center">
     <p-card header="{{data.title | uppercase}}" subheader="Rating: {{data.vote_average}}">
         <ng-template pTemplate="header">
-            <img [alt]="data.title" [src]="data.poster_path" />
+            <img [alt]="data.title" [src]="'https://image.tmdb.org/t/p/w500/' + data.poster_path" />
         </ng-template>
         <div class="p-card-content">
-            <p>
-                {{data.overview}}
-            </p>
+            <p-button (onClick)="redirectToDetails()" label="Details..." severity="info" [raised]="true"
+                [text]="true" />
         </div>
         <ng-template pTemplate="footer">
             <div class="flex gap-3 mt-1">
