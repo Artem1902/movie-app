@@ -19,28 +19,29 @@ export class NowPlayingMoviePageComponent {
   favoriteMovieListIds: string[] = [];
   watchLaterMovieListIds: string[] = [];
 
-  handleChangeFavorite(data: any) {
+  handleChangeFavorite(data: { id: any }): void {
     const newFavoriteMovieId = data.id;
-    const findedMovie = this.favoriteMovieListIds.find(
-      (el) => el === newFavoriteMovieId,
-    );
-    if (findedMovie) {
-      this.favoriteMovieListIds = this.favoriteMovieListIds.filter(
-        (el) => el !== newFavoriteMovieId,
-      );
-    } else this.favoriteMovieListIds.push(newFavoriteMovieId);
+    console.log(typeof newFavoriteMovieId);
+    const index = this.favoriteMovieListIds.indexOf(newFavoriteMovieId);
+
+    if (index !== -1) {
+      this.favoriteMovieListIds.splice(index, 1);
+    } else {
+      this.favoriteMovieListIds.push(newFavoriteMovieId);
+    }
   }
-  handleChangeWatching(data: any) {
+
+  handleChangeWatching(data: { id: any }): void {
     const newWatchingMovieId = data.id;
-    const findedMovie = this.watchLaterMovieListIds.find(
-      (el) => el === newWatchingMovieId,
-    );
-    if (findedMovie) {
-      this.watchLaterMovieListIds = this.watchLaterMovieListIds.filter(
-        (el) => el !== newWatchingMovieId,
-      );
-    } else this.watchLaterMovieListIds.push(newWatchingMovieId);
+    const index = this.watchLaterMovieListIds.indexOf(newWatchingMovieId);
+
+    if (index !== -1) {
+      this.watchLaterMovieListIds.splice(index, 1);
+    } else {
+      this.watchLaterMovieListIds.push(newWatchingMovieId);
+    }
   }
+
   handleNavigateToDetailsPage(id: string) {
     this.router.navigate([`movie/${id}`]);
   }
