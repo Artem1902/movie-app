@@ -1,7 +1,7 @@
-<header class="header">
-    <div class="header__container">
-        <h1 class="header__title">
-            Movie - app
-        </h1>
-    </div>
-</header>
+<h1 class="header__title">Movie-app</h1>
+<nav class="header__nav">
+    <p-button label="Favorites" (onClick)="navigateWithData(favoriteMovieIds, 'favorite')" severity="info"
+        [raised]="true" [text]="true" />
+    <p-button label="Watch List" (onClick)="navigateWithData(watchLaterMovieIds)" severity="info" [raised]="true"
+        [text]="true" />
+</nav>

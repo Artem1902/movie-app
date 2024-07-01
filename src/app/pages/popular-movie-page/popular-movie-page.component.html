@@ -1,0 +1,11 @@
+<app-header [favoriteMovieIds]='favoriteMovieListIds' [watchLaterMovieIds]='watchLaterMovieListIds'></app-header>
+
+<div class="movies__cards">
+    @if (movieList.length > 0) {
+    @for (movie of movieList; track movie.id) {
+    <app-movie [data]="movie" (changeFavorite)="handleChangeFavorite($event)"
+        (changeWatching)="handleChangeWatching($event)"
+        (redirectDetails)="handleNavigateToDetailsPage($event)"></app-movie>
+    }
+    }
+</div>

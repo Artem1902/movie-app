@@ -25,6 +25,7 @@ export class MovieComponent implements OnInit {
   @Input() data: any;
   @Output() changeFavorite = new EventEmitter<any>();
   @Output() changeWatching = new EventEmitter<any>();
+  @Output() redirectDetails = new EventEmitter<any>();
 
   isMore = false;
 
@@ -47,5 +48,8 @@ export class MovieComponent implements OnInit {
   changeToWatching() {
     this.data.isInWatchingList = !this.data.isInWatchingList;
     this.changeWatching.emit(this.data);
+  }
+  redirectToDetails() {
+    this.redirectDetails.emit(this.data.id);
   }
 }

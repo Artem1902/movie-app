@@ -1,0 +1,13 @@
+<div class="card flex justify-content-center">
+    <p-sidebar [(visible)]="sidebarVisible">
+        <nav>
+            <ul>
+                <li><a routerLink='now-playing'>Now playing</a></li>
+                <li><a routerLink='popular'>Popular</a></li>
+                <li><a routerLink='top-rated'>Top rated</a></li>
+                <li><a routerLink='upcoming'>Upcoming</a></li>
+            </ul>
+        </nav>
+    </p-sidebar>
+    <p-button (click)="sidebarVisible = true" icon="pi pi-arrow-right" label="Movies Category" />
+</div>
