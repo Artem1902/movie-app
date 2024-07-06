@@ -1,0 +1,8 @@
+<div class="movies__cards">
+    @if (movies.length > 0) {
+    @for (movie of movies; track movie.id) {
+    <app-movie [data]="movie" [favBtns]="favBtns" [watchBtns]="watchBtns"
+        (redirectDetails)="handleNavigateToDetailsPage($event)"></app-movie>
+    }
+    }
+</div>
