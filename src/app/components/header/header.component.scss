@@ -9,3 +9,16 @@
   font-size: 30px;
   text-transform: uppercase;
 }
+
+.header__link {
+  font-size: 20px;
+  text-decoration: none;
+  padding: 10px 20px;
+  color: yellow;
+  transition: color 0.3s;
+  @media (any-hover: hover) {
+    &:hover {
+      color: darkred;
+    }
+  }
+}

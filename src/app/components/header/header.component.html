@@ -1,7 +1,5 @@
 <h1 class="header__title">Movie-app</h1>
 <nav class="header__nav">
-    <p-button label="Favorites" (onClick)="navigateWithData(favoriteMovieIds, 'favorite')" severity="info"
-        [raised]="true" [text]="true" />
-    <p-button label="Watch List" (onClick)="navigateWithData(watchLaterMovieIds)" severity="info" [raised]="true"
-        [text]="true" />
+    <a class="header__link" routerLink="favorite">Favorites</a>
+    <a class="header__link" routerLink="watch-later">Watch Later</a>
 </nav>

@@ -6,6 +6,7 @@ import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
+import { MovieService } from '../../services/movie.service';
 
 @Component({
   selector: 'app-movie',
@@ -23,11 +24,12 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class MovieComponent implements OnInit {
   @Input() data: any;
-  @Output() changeFavorite = new EventEmitter<any>();
-  @Output() changeWatching = new EventEmitter<any>();
+  @Input() favBtns: boolean = false;
+  @Input() watchBtns: boolean = false;
+
   @Output() redirectDetails = new EventEmitter<any>();
 
-  isMore = false;
+  constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
     if (!this.data.hasOwnProperty('isFavorite')) {
@@ -37,17 +39,22 @@ export class MovieComponent implements OnInit {
       this.data.isInWatchingList = false;
     }
   }
-
-  changeIsMore() {
-    this.isMore = !this.isMore;
-  }
   changeToFavorites() {
+    if (this.data.isFavorite) {
+      this.movieService.deleteFromFavorites(this.data.id);
+    } else {
+      this.movieService.setToFavorites(this.data.id);
+    }
     this.data.isFavorite = !this.data.isFavorite;
-    this.changeFavorite.emit(this.data);
   }
+
   changeToWatching() {
+    if (this.data.isInWatchingList) {
+      this.movieService.deleteFromWatchList(this.data.id);
+    } else {
+      this.movieService.setToWatchLater(this.data.id);
+    }
     this.data.isInWatchingList = !this.data.isInWatchingList;
-    this.changeWatching.emit(this.data);
   }
   redirectToDetails() {
     this.redirectDetails.emit(this.data.id);

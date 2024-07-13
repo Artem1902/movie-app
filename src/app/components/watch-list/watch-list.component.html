@@ -1,8 +1,0 @@
-@if (watchLaterMovies.length > 0) {
-<h3 class="movies__title">Watch Later List:</h3>
-<div class="movies__cards">
-    @for (watchLaterMovie of watchLaterMovies; track watchLaterMovie.id) {
-    <app-movie [data]='watchLaterMovie'></app-movie>
-    }
-</div>
-}

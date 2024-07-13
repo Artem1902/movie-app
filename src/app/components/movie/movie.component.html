@@ -38,6 +38,17 @@
                 [text]="true" />
         </div>
         <ng-template pTemplate="footer">
+            @if(favBtns){
+            <div class="footer__favAndWatch">
+                <p-button (onClick)="changeToFavorites()" icon="pi pi-times" severity="danger"
+                    pTooltip="Delete from favorite" tooltipPosition="top" />
+            </div>
+            } @else if(watchBtns) {
+            <div class="footer__favAndWatch">
+                <p-button (onClick)="changeToWatching()" icon="pi pi-times" severity="danger"
+                    pTooltip="Delete from watch list" tooltipPosition="top" />
+            </div>
+            }@else {
             <div class="flex gap-3 mt-1">
                 <p-button (onClick)="changeToFavorites()" [icon]="data.isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"
                     severity="primary" [raised]="true"
@@ -47,6 +58,7 @@
                     [pTooltip]="data.isInWatchingList ? 'Delete from watch list' : 'Add to watch list'"
                     tooltipPosition="top" />
             </div>
+            }
         </ng-template>
     </p-card>
 </div>
