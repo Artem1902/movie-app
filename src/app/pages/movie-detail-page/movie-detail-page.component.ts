@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  nowPlayingMovies,
-  popularMovies,
-  topRatedMovies,
-  upcomingMovies,
-} from '../../mock-data';
+import { DetailsMovie } from '../../models/movie.model';
 import { MovieComponent } from '../../components/movie/movie.component';
+import { MovieService } from '../../services/movie.service';
 
 @Component({
   selector: 'app-movie-detail-page',
@@ -17,21 +13,20 @@ import { MovieComponent } from '../../components/movie/movie.component';
   imports: [MovieComponent],
 })
 export class MovieDetailPageComponent implements OnInit {
-  allMovies = [
-    ...nowPlayingMovies,
-    ...popularMovies,
-    ...topRatedMovies,
-    ...upcomingMovies,
-  ];
+  findedMovieDetails: DetailsMovie | undefined;
 
-  findedMovieDetails: any;
-
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private movieService: MovieService,
+  ) {}
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const movieId = Number(params['id']);
-      this.findedMovieDetails = this.allMovies.find((el) => el.id === movieId);
+      this.movieService.getDetailsMovie(movieId).subscribe((movie) => {
+        this.findedMovieDetails = movie;
+        console.log(this.findedMovieDetails);
+      });
     });
   }
 }

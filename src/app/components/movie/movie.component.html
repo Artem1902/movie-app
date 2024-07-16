@@ -27,7 +27,7 @@
             {{data.isInWatchingList ? 'Added to watch list!': 'Add towatchlist+'}}</button>
     </div>
 </article> -->
-
+@if(data){
 <div class="card flex justify-content-center">
     <p-card header="{{data.title | uppercase}}" subheader="Rating: {{data.vote_average}}">
         <ng-template pTemplate="header">
@@ -62,3 +62,6 @@
         </ng-template>
     </p-card>
 </div>
+} @else {
+<h2>No movies found</h2>
+}

@@ -1,5 +1,6 @@
+@if(favoritesMovies){
 @if(favoritesMovies.length > 0) {
 <h2>Favorites Movies List:</h2>
 <app-movie-list [movies]="favoritesMovies" [favBtns]=true></app-movie-list>
-
+}
 }

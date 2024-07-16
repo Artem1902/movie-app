@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
-import { MovieService } from '../../services/movie.service';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
+import { Movie } from '../../models/movie.model';
+import { MovieService } from '../../services/movie.service';
 
 @Component({
   selector: 'app-favorites-movie-page',
@@ -11,11 +12,13 @@ import { MovieListComponent } from '../../components/movie-list/movie-list.compo
   imports: [MovieListComponent],
 })
 export class FavoritesMoviePageComponent implements OnInit {
-  favoritesMovies: any = [];
+  favoritesMovies: Movie[] | null = null;
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
-    this.favoritesMovies = this.movieService.getFavoriteMovies();
+    this.movieService.favoriteMoviesList$.subscribe((data) => {
+      this.favoritesMovies = data;
+    });
   }
 }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, Input } from '@angular/core';
+import { Movie } from '../../models/movie.model';
 import { MovieComponent } from '../movie/movie.component';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movie-list',
@@ -11,13 +11,9 @@ import { Router } from '@angular/router';
   imports: [MovieComponent],
 })
 export class MovieListComponent {
-  @Input() movies: any = [];
+  @Input() movies: Movie[] = [];
   @Input() favBtns: boolean = false;
   @Input() watchBtns: boolean = false;
 
-  constructor(private router: Router) {}
-
-  handleNavigateToDetailsPage(id: string) {
-    this.router.navigate([`movie/${id}`]);
-  }
+  constructor() {}
 }

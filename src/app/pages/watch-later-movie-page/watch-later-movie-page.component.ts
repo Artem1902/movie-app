@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
+import { Movie } from '../../models/movie.model';
 import { MovieService } from '../../services/movie.service';
 
 @Component({
@@ -11,11 +12,13 @@ import { MovieService } from '../../services/movie.service';
   imports: [MovieListComponent],
 })
 export class WatchLaterMoviePageComponent implements OnInit {
-  watchLaterMovies: any = [];
+  watchLaterMovies: Movie[] | null = null;
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit(): void {
-    this.watchLaterMovies = this.movieService.getWatchLater();
+    this.movieService.watchLaterMoviesList$.subscribe(
+      (data) => (this.watchLaterMovies = data),
+    );
   }
 }
