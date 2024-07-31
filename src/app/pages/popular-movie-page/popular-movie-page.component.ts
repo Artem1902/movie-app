@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { Movie } from '../../models/movie.model';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { MovieService } from '../../services/movie.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-popular-movie-page',
@@ -13,8 +14,9 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './popular-movie-page.component.scss',
   imports: [HeaderComponent, MovieListComponent, MovieComponent],
 })
-export class PopularMoviePageComponent implements OnInit {
+export class PopularMoviePageComponent implements OnInit, OnDestroy {
   popularMovies: Movie[] | null = null;
+  private subscription: Subscription | undefined;
 
   constructor(private movieService: MovieService) {}
 
@@ -22,5 +24,10 @@ export class PopularMoviePageComponent implements OnInit {
     this.movieService.getPopularMovies().subscribe((data) => {
       this.popularMovies = data.results;
     });
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

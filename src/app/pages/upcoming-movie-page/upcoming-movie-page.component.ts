@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { Movie } from '../../models/movie.model';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { MovieService } from '../../services/movie.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-upcoming-movie-page',
@@ -13,8 +14,9 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './upcoming-movie-page.component.scss',
   imports: [HeaderComponent, MovieListComponent, MovieComponent],
 })
-export class UpcomingMoviePageComponent implements OnInit {
+export class UpcomingMoviePageComponent implements OnInit, OnDestroy {
   upComingMovies: Movie[] | null = null;
+  private subscription: Subscription | undefined;
 
   constructor(private movieService: MovieService) {}
 
@@ -22,5 +24,10 @@ export class UpcomingMoviePageComponent implements OnInit {
     this.movieService.getUpComingMovies().subscribe((data) => {
       this.upComingMovies = data.results;
     });
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

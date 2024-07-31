@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DetailsMovie } from '../../models/movie.model';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { MovieService } from '../../services/movie.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-movie-detail-page',
@@ -12,8 +13,9 @@ import { MovieService } from '../../services/movie.service';
   styleUrl: './movie-detail-page.component.scss',
   imports: [MovieComponent],
 })
-export class MovieDetailPageComponent implements OnInit {
+export class MovieDetailPageComponent implements OnInit, OnDestroy {
   findedMovieDetails: DetailsMovie | undefined;
+  private subscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
@@ -28,5 +30,10 @@ export class MovieDetailPageComponent implements OnInit {
         console.log(this.findedMovieDetails);
       });
     });
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

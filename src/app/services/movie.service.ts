@@ -2,14 +2,15 @@
 import { Injectable } from '@angular/core';
 import { DetailsMovie, Movie, MovieAppModel } from '../models/movie.model';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  apiKey = '?api_key=25444bb4684472e1248b0b837cb44767';
-  baseApiUrl = 'https://api.themoviedb.org/3/movie';
+  accountId: number | null = null;
+  sessionId: string | null = null;
 
   favoriteMoviesList: Movie[] | null = [];
   private favoriteMovies$ = new BehaviorSubject<Movie[]>([]);
@@ -21,38 +22,21 @@ export class MovieService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getPopularMovies(): Observable<MovieAppModel> {
-    return this.httpClient.get<MovieAppModel>(
-      `${this.baseApiUrl}/popular${this.apiKey}`,
-    );
+  setAccountId(id: number) {
+    this.accountId = id;
   }
-
-  getNowPlayingMovies(): Observable<MovieAppModel> {
-    return this.httpClient.get<MovieAppModel>(
-      `${this.baseApiUrl}/now_playing${this.apiKey}`,
-    );
-  }
-
-  getTopRatedMovies(): Observable<MovieAppModel> {
-    return this.httpClient.get<MovieAppModel>(
-      `${this.baseApiUrl}/top_rated${this.apiKey}`,
-    );
-  }
-
-  getUpComingMovies(): Observable<MovieAppModel> {
-    return this.httpClient.get<MovieAppModel>(
-      `${this.baseApiUrl}/upcoming${this.apiKey}`,
-    );
+  setSessionId(id: string) {
+    this.sessionId = id;
   }
 
   setToFavorites(movie: Movie) {
     if (movie && this.favoriteMoviesList) {
-      const isAlreadyFavorite = this.favoriteMoviesList.some(
-        (favMovie: { id: number }) => favMovie.id === movie.id,
+      const isAlreadyInFavorites = this.favoriteMoviesList.some(
+        (favorMovie: { id: number }) => favorMovie.id === movie.id,
       );
-      if (isAlreadyFavorite) {
+      if (isAlreadyInFavorites) {
         this.favoriteMoviesList = this.favoriteMoviesList.filter(
-          (favMovie: { id: number }) => favMovie.id !== movie.id,
+          (favorMovie: { id: number }) => favorMovie.id !== movie.id,
         );
       } else {
         this.favoriteMoviesList.push(movie);
@@ -60,6 +44,31 @@ export class MovieService {
       this.favoriteMovies$.next(this.favoriteMoviesList);
     }
   }
+
+  getPopularMovies(): Observable<MovieAppModel> {
+    return this.httpClient.get<MovieAppModel>(
+      `${environment.apiUrl}/movie/popular${environment.apiKey}`,
+    );
+  }
+
+  getNowPlayingMovies(): Observable<MovieAppModel> {
+    return this.httpClient.get<MovieAppModel>(
+      `${environment.apiUrl}/movie/now_playing${environment.apiKey}`,
+    );
+  }
+
+  getTopRatedMovies(): Observable<MovieAppModel> {
+    return this.httpClient.get<MovieAppModel>(
+      `${environment.apiUrl}/movie/top_rated${environment.apiKey}`,
+    );
+  }
+
+  getUpComingMovies(): Observable<MovieAppModel> {
+    return this.httpClient.get<MovieAppModel>(
+      `${environment.apiUrl}/movie/upcoming${environment.apiKey}`,
+    );
+  }
+
   deleteFromFavorites(movieToDelete: Movie) {
     if (this.favoriteMoviesList) {
       this.favoriteMoviesList = this.favoriteMoviesList.filter(
@@ -95,11 +104,12 @@ export class MovieService {
 
   getDetailsMovie(id: number): Observable<DetailsMovie> {
     return this.httpClient.get<DetailsMovie>(
-      `${this.baseApiUrl}/${id}${this.apiKey}`,
+      `${environment.apiUrl}/movie/${id}${environment.apiKey}`,
     );
   }
 
-  //   getMovieById(id: number) {
-  //     return this.allMovies.find((movie) => movie.id === id);
-  //   }
+  private handleError(error: any) {
+    console.error('An error occurred:', error);
+    return throwError(error);
+  }
 }
