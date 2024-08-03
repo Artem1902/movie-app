@@ -40,12 +40,12 @@
         <ng-template pTemplate="footer">
             @if(favBtns){
             <div class="footer__favAndWatch">
-                <p-button (onClick)="changeToFavorites()" icon="pi pi-times" severity="danger"
+                <p-button (onClick)="deleteFavorite()" icon="pi pi-times" severity="danger"
                     pTooltip="Delete from favorite" tooltipPosition="top" />
             </div>
             } @else if(watchBtns) {
             <div class="footer__favAndWatch">
-                <p-button (onClick)="changeToWatching()" icon="pi pi-times" severity="danger"
+                <p-button (onClick)="deleteWatchList()" icon="pi pi-times" severity="danger"
                     pTooltip="Delete from watch list" tooltipPosition="top" />
             </div>
             }@else {

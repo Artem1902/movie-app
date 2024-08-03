@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { Movie } from '../../models/movie.model';
-import { MovieComponent } from '../../components/movie/movie.component';
 import { MovieService } from '../../services/movie.service';
-import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
+import { MovieComponent } from '../../components/movie/movie.component';
 
 @Component({
   selector: 'app-popular-movie-page',
@@ -14,20 +15,22 @@ import { Subscription } from 'rxjs';
   styleUrl: './popular-movie-page.component.scss',
   imports: [HeaderComponent, MovieListComponent, MovieComponent],
 })
-export class PopularMoviePageComponent implements OnInit, OnDestroy {
+export class PopularMoviePageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
   popularMovies: Movie[] | null = null;
-  private subscription: Subscription | undefined;
 
-  constructor(private movieService: MovieService) {}
+  constructor(private movieService: MovieService) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.movieService.getPopularMovies().subscribe((data) => {
-      this.popularMovies = data.results;
-    });
-  }
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.movieService
+      .getMoviesByCategory('popular')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        this.popularMovies = data.results;
+      });
   }
 }

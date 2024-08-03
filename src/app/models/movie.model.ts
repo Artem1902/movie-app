@@ -25,6 +25,13 @@ export interface MovieAppModel {
   results: Movie[];
 }
 
+export interface ProductionCompanies {
+  id: number;
+  logo_path: string;
+  name: string;
+  origin_country: string;
+}
+
 export interface DetailsMovie {
   adult: boolean;
   backdrop_path: string;
@@ -45,9 +52,7 @@ export interface DetailsMovie {
   overview: string;
   popularity: number;
   poster_path: string;
-  production_companies: [
-    { id: number; logo_path: string; name: string; origin_country: string },
-  ];
+  production_companies: ProductionCompanies[];
   status: string;
   tagline: string;
   title: string;
@@ -55,4 +60,10 @@ export interface DetailsMovie {
   vote_average: number;
   vote_count: number;
   release_date: string;
+}
+
+export interface ResponseAPI {
+  status_code: number;
+  status_message: string;
+  success: boolean;
 }

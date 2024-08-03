@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DetailsMovie } from '../../models/movie.model';
-import { MovieComponent } from '../../components/movie/movie.component';
 import { MovieService } from '../../services/movie.service';
-import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
+import { MovieComponent } from '../../components/movie/movie.component';
 
 @Component({
   selector: 'app-movie-detail-page',
@@ -13,27 +14,28 @@ import { Subscription } from 'rxjs';
   styleUrl: './movie-detail-page.component.scss',
   imports: [MovieComponent],
 })
-export class MovieDetailPageComponent implements OnInit, OnDestroy {
+export class MovieDetailPageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
   findedMovieDetails: DetailsMovie | undefined;
-  private subscription: Subscription | undefined;
 
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const movieId = Number(params['id']);
-      this.movieService.getDetailsMovie(movieId).subscribe((movie) => {
-        this.findedMovieDetails = movie;
-        console.log(this.findedMovieDetails);
-      });
+      this.movieService
+        .getDetailsMovie(movieId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((movie) => {
+          this.findedMovieDetails = movie;
+        });
     });
-  }
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 }
