@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { Movie } from '../../models/movie.model';
 import { MovieService } from '../../services/movie.service';
-import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({
   selector: 'app-favorites-movie-page',
@@ -12,20 +13,21 @@ import { Subscription } from 'rxjs';
   styleUrl: './favorites-movie-page.component.scss',
   imports: [MovieListComponent],
 })
-export class FavoritesMoviePageComponent implements OnInit, OnDestroy {
+export class FavoritesMoviePageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
   favoritesMovies: Movie[] | null = null;
-  private subscription: Subscription | undefined;
 
-  constructor(private movieService: MovieService) {}
+  constructor(private movieService: MovieService) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.subscription = this.movieService.favoriteMoviesList$.subscribe(
-      (data) => (this.favoritesMovies = data),
-    );
-  }
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.movieService.getFavoriteMoviesList().subscribe();
+
+    this.movieService.favoriteMoviesList$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => (this.favoritesMovies = data));
   }
 }

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { Movie } from '../../models/movie.model';
 import { MovieService } from '../../services/movie.service';
-import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({
   selector: 'app-watch-later-movie-page',
@@ -12,20 +13,21 @@ import { Subscription } from 'rxjs';
   styleUrl: './watch-later-movie-page.component.scss',
   imports: [MovieListComponent],
 })
-export class WatchLaterMoviePageComponent implements OnInit, OnDestroy {
+export class WatchLaterMoviePageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
   watchLaterMovies: Movie[] | null = null;
-  private subscription: Subscription | undefined;
 
-  constructor(private movieService: MovieService) {}
+  constructor(private movieService: MovieService) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.movieService.watchLaterMoviesList$.subscribe(
-      (data) => (this.watchLaterMovies = data),
-    );
-  }
-  ngOnDestroy(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+    this.movieService.getWatchLaterMoviesList().subscribe();
+
+    this.movieService.watchLaterMoviesList$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => (this.watchLaterMovies = data));
   }
 }
