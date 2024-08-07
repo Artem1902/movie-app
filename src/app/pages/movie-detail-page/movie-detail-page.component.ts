@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  nowPlayingMovies,
-  popularMovies,
-  topRatedMovies,
-  upcomingMovies,
-} from '../../mock-data';
+import { DetailsMovie } from '../../models/movie.model';
+import { MovieService } from '../../services/movie.service';
+import { takeUntil } from 'rxjs';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 import { MovieComponent } from '../../components/movie/movie.component';
 
 @Component({
@@ -16,22 +14,28 @@ import { MovieComponent } from '../../components/movie/movie.component';
   styleUrl: './movie-detail-page.component.scss',
   imports: [MovieComponent],
 })
-export class MovieDetailPageComponent implements OnInit {
-  allMovies = [
-    ...nowPlayingMovies,
-    ...popularMovies,
-    ...topRatedMovies,
-    ...upcomingMovies,
-  ];
+export class MovieDetailPageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
+  findedMovieDetails: DetailsMovie | undefined;
 
-  findedMovieDetails: any;
-
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private movieService: MovieService,
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       const movieId = Number(params['id']);
-      this.findedMovieDetails = this.allMovies.find((el) => el.id === movieId);
+      this.movieService
+        .getDetailsMovie(movieId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((movie) => {
+          this.findedMovieDetails = movie;
+        });
     });
   }
 }

@@ -1,98 +1,199 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Injectable } from '@angular/core';
 import {
-  nowPlayingMovies,
-  popularMovies,
-  topRatedMovies,
-  upcomingMovies,
-} from '../mock-data';
+  DetailsMovie,
+  Movie,
+  MovieAppModel,
+  ResponseAPI,
+} from '../models/movie.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  tap,
+  throwError,
+} from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  allMovies = [
-    ...new Set([
-      ...nowPlayingMovies,
-      ...popularMovies,
-      ...topRatedMovies,
-      ...upcomingMovies,
-    ]),
-  ];
-  favoriteMoviesList: any = [];
-  watchLaterMoviesList: any = [];
+  accountId: number | null = null;
+  sessionId: string | null = null;
 
-  constructor() {}
+  private favoriteMovies$ = new BehaviorSubject<Movie[]>([]);
+  public favoriteMoviesList$ = this.favoriteMovies$.asObservable();
 
-  getNowPlayingMovies() {
-    return nowPlayingMovies;
+  private watchMovies$ = new BehaviorSubject<Movie[]>([]);
+  public watchLaterMoviesList$ = this.watchMovies$.asObservable();
+
+  constructor(private httpClient: HttpClient) {}
+
+  setAccountId(id: number) {
+    this.accountId = id;
+  }
+  setSessionId(id: string) {
+    this.sessionId = id;
+  }
+  getMoviesByCategory(category: string): Observable<MovieAppModel> {
+    return this.httpClient
+      .get<MovieAppModel>(
+        `${environment.apiUrl}/movie/${category}${environment.apiKey}`,
+      )
+      .pipe(catchError(this.handleError));
   }
 
-  getPopularMovies() {
-    return popularMovies;
-  }
-
-  getTopRatedMovies() {
-    return topRatedMovies;
-  }
-
-  getUpComingMovies() {
-    return upcomingMovies;
-  }
-
-  setToFavorites(id: number) {
-    const movie = this.getMovieById(id);
-    if (movie) {
-      const isAlreadyFavorite = this.favoriteMoviesList.some(
-        (favMovie: { id: number }) => favMovie.id === id,
-      );
-      if (isAlreadyFavorite) {
-        this.favoriteMoviesList = this.favoriteMoviesList.filter(
-          (favMovie: { id: number }) => favMovie.id !== id,
-        );
-      } else {
-        this.favoriteMoviesList.push(movie);
-      }
+  getFavoriteMoviesList(): Observable<Movie[]> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
     }
+
+    const url = `${environment.apiUrl}/account/${this.accountId}/favorite/movies${environment.apiKey}&session_id=${this.sessionId}`;
+    return this.httpClient
+      .get<any>(url)
+      .pipe(
+        map((res) => res.results),
+        tap((movies) => this.favoriteMovies$.next(movies)),
+      )
+      .pipe(catchError(this.handleError));
   }
 
-  getFavoriteMovies() {
-    return this.favoriteMoviesList;
-  }
+  setToFavorites(movie: Movie): Observable<ResponseAPI> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
+    }
+    const url = `${environment.apiUrl}/account/${this.accountId}/favorite?session_id=${this.sessionId}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.apiToken}`,
+    });
 
-  deleteFromFavorites(id: number) {
-    this.favoriteMoviesList = this.favoriteMoviesList.filter(
-      (movie: { id: number }) => movie.id !== id,
+    const body = {
+      media_type: 'movie',
+      media_id: movie.id,
+      favorite: true,
+    };
+
+    return this.httpClient.post<any>(url, body, { headers }).pipe(
+      catchError((error) => {
+        console.error('Response from API:', error);
+        return throwError(error);
+      }),
     );
   }
 
-  setToWatchLater(id: number) {
-    const movie = this.getMovieById(id);
-    if (movie) {
-      const isAlreadyInWatchList = this.watchLaterMoviesList.some(
-        (watchMovie: { id: number }) => watchMovie.id === id,
-      );
-      if (isAlreadyInWatchList) {
-        this.watchLaterMoviesList = this.watchLaterMoviesList.filter(
-          (watchMovie: { id: number }) => watchMovie.id !== id,
-        );
-      } else {
-        this.watchLaterMoviesList.push(movie);
-      }
+  deleteFromFavorites(movieToDelete: Movie): Observable<ResponseAPI> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
     }
-  }
+    const url = `${environment.apiUrl}/account/${this.accountId}/favorite?session_id=${this.sessionId}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.apiToken}`,
+    });
 
-  deleteFromWatchList(id: number) {
-    this.watchLaterMoviesList = this.watchLaterMoviesList.filter(
-      (movie: { id: number }) => movie.id !== id,
+    const body = {
+      media_type: 'movie',
+      media_id: movieToDelete.id,
+      favorite: false,
+    };
+
+    return this.httpClient.post<any>(url, body, { headers }).pipe(
+      tap(() => {
+        const updatedMovies = this.favoriteMovies$
+          .getValue()
+          .filter((movie) => movie.id !== movieToDelete.id);
+        this.favoriteMovies$.next(updatedMovies);
+      }),
+      catchError((error) => {
+        console.error('Response from API:', error);
+        return throwError(error);
+      }),
     );
   }
 
-  getWatchLater() {
-    return this.watchLaterMoviesList;
+  getWatchLaterMoviesList(): Observable<Movie[]> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
+    }
+
+    const url = `${environment.apiUrl}/account/${this.accountId}/watchlist/movies${environment.apiKey}&session_id=${this.sessionId}`;
+    return this.httpClient
+      .get<any>(url)
+      .pipe(
+        map((res) => res.results),
+        tap((movies) => this.watchMovies$.next(movies)),
+      )
+      .pipe(catchError(this.handleError));
   }
 
-  getMovieById(id: number) {
-    return this.allMovies.find((movie) => movie.id === id);
+  setToWatchLater(movie: Movie): Observable<ResponseAPI> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
+    }
+
+    const url = `${environment.apiUrl}/account/${this.accountId}/watchlist?session_id=${this.sessionId}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.apiToken}`,
+    });
+
+    const body = {
+      media_type: 'movie',
+      media_id: movie.id,
+      watchlist: true,
+    };
+
+    return this.httpClient.post<any>(url, body, { headers }).pipe(
+      catchError((error) => {
+        console.error('Response from API:', error);
+        return throwError(error);
+      }),
+    );
+  }
+  deleteFromWatchList(movieToDelete: Movie): Observable<ResponseAPI> {
+    if (!this.accountId || !this.sessionId) {
+      return throwError('Not authenticated');
+    }
+    const url = `${environment.apiUrl}/account/${this.accountId}/watchlist?session_id=${this.sessionId}`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${environment.apiToken}`,
+    });
+
+    const body = {
+      media_type: 'movie',
+      media_id: movieToDelete.id,
+      watchlist: false,
+    };
+
+    return this.httpClient.post<any>(url, body, { headers }).pipe(
+      tap(() => {
+        const updatedMovies = this.watchMovies$
+          .getValue()
+          .filter((movie) => movie.id !== movieToDelete.id);
+        this.watchMovies$.next(updatedMovies);
+      }),
+      catchError((error) => {
+        console.error('Response from API:', error);
+        return throwError(error);
+      }),
+    );
+  }
+
+  getDetailsMovie(id: number): Observable<DetailsMovie> {
+    return this.httpClient
+      .get<DetailsMovie>(
+        `${environment.apiUrl}/movie/${id}${environment.apiKey}`,
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  private handleError(error: any) {
+    console.error('An error occurred:', error);
+    return throwError(error);
   }
 }
