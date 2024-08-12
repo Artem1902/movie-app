@@ -14,8 +14,6 @@ export interface Movie {
   video: boolean;
   vote_average: number;
   vote_count: number;
-  isFavorite?: boolean;
-  isInWatchingList?: boolean;
 }
 
 export interface MovieAppModel {

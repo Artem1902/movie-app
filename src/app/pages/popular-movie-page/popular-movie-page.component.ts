@@ -2,35 +2,34 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { Movie } from '../../models/movie.model';
-import { MovieService } from '../../services/movie.service';
-import { takeUntil } from 'rxjs';
+
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 import { MovieComponent } from '../../components/movie/movie.component';
+import { loadPopularMovies } from '../../store/actions';
+import { Store } from '@ngrx/store';
+import { selectPopularMovies } from '../../store/selectors';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-popular-movie-page',
   standalone: true,
   templateUrl: './popular-movie-page.component.html',
   styleUrl: './popular-movie-page.component.scss',
-  imports: [HeaderComponent, MovieListComponent, MovieComponent],
+  imports: [HeaderComponent, MovieListComponent, MovieComponent, AsyncPipe],
 })
 export class PopularMoviePageComponent
   extends ClearObservableDirective
   implements OnInit
 {
-  popularMovies: Movie[] | null = null;
+  selectedMovies$ = this.store.select(selectPopularMovies);
 
-  constructor(private movieService: MovieService) {
+  // popularMovies: Movie[] | null = null;
+
+  constructor(private store: Store) {
     super();
   }
 
   ngOnInit(): void {
-    this.movieService
-      .getMoviesByCategory('popular')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        this.popularMovies = data.results;
-      });
+    this.store.dispatch(loadPopularMovies());
   }
 }
