@@ -1,14 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { Movie } from '../../models/movie.model';
-import { MovieService } from '../../services/movie.service';
 import { Router } from '@angular/router';
+import { takeUntil } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectIsFavorite, selectIsInWatchLater } from '../../store/selectors';
+import {
+  updateFavoritesMovies,
+  updateWatchLaterMovies,
+} from '../../store/actions';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({
   selector: 'app-movie',
@@ -24,87 +31,46 @@ import { Router } from '@angular/router';
   templateUrl: './movie.component.html',
   styleUrl: './movie.component.scss',
 })
-export class MovieComponent {
+export class MovieComponent extends ClearObservableDirective implements OnInit {
   @Input() data: Movie | undefined;
   @Input() favBtns: boolean = false;
   @Input() watchBtns: boolean = false;
 
+  isFavorite: boolean = false;
+  isInWatchList: boolean = false;
+
   constructor(
-    private movieService: MovieService,
     private router: Router,
-  ) {}
+    private store: Store,
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
     if (this.data) {
-      if (!this.data.hasOwnProperty('isFavorite')) {
-        this.data.isFavorite = false;
-      }
-      if (!this.data.hasOwnProperty('isInWatchingList')) {
-        this.data.isInWatchingList = false;
-      }
+      this.store
+        .select(selectIsFavorite(this.data.id))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((res) => (this.isFavorite = res));
+      this.store
+        .select(selectIsInWatchLater(this.data.id))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((res) => (this.isInWatchList = res));
     }
   }
 
-  changeToFavorites() {
-    if (this.data) {
-      if (this.data.isFavorite) {
-        this.movieService.deleteFromFavorites(this.data);
-      } else {
-        this.movieService.setToFavorites(this.data).subscribe(
-          (response) => {
-            console.log('Response from API:', response);
-          },
-          (error) => {
-            console.error('Error:', error);
-          },
-        );
-      }
-      this.data.isFavorite = !this.data.isFavorite;
-    }
+  onUpdateFavorites(id: number) {
+    this.store.dispatch(
+      updateFavoritesMovies({ movie_id: id, isFavorite: this.isFavorite }),
+    );
   }
-
-  changeToWatching() {
-    if (this.data) {
-      if (this.data.isInWatchingList) {
-        this.movieService.deleteFromWatchList(this.data);
-      } else {
-        this.movieService.setToWatchLater(this.data).subscribe(
-          (response) => {
-            console.log('Response from API:', response);
-          },
-          (error) => {
-            console.error('Error:', error);
-          },
-        );
-      }
-      this.data.isInWatchingList = !this.data.isInWatchingList;
-    }
-  }
-
-  deleteFavorite() {
-    if (this.data) {
-      this.movieService.deleteFromFavorites(this.data).subscribe(
-        (response) => {
-          console.log('Response from API:', response);
-        },
-        (error) => {
-          console.error('Error:', error);
-        },
-      );
-    }
-  }
-
-  deleteWatchList() {
-    if (this.data) {
-      this.movieService.deleteFromWatchList(this.data).subscribe(
-        (response) => {
-          console.log('Response from API:', response);
-        },
-        (error) => {
-          console.error('Error:', error);
-        },
-      );
-    }
+  onUpdateWatchList(id: number) {
+    this.store.dispatch(
+      updateWatchLaterMovies({
+        movie_id: id,
+        isInWatchList: this.isInWatchList,
+      }),
+    );
   }
 
   redirectToDetails() {

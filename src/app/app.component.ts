@@ -10,6 +10,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AuthService } from './services/auth.service';
 import { MovieService } from './services/movie.service';
+import { Store } from '@ngrx/store';
+import { loadFavoritesMovies } from './store/actions';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +32,7 @@ export class AppComponent implements OnInit {
   constructor(
     public authService: AuthService,
     private movieService: MovieService,
+    private store: Store,
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +42,9 @@ export class AppComponent implements OnInit {
         this.movieService.setSessionId(sessionId);
         console.log('Account ID:', accountId);
         console.log('Session ID:', sessionId);
+        if (accountId && sessionId) {
+          this.store.dispatch(loadFavoritesMovies());
+        }
       },
       (error) => {
         console.error('Authentication failed:', error);

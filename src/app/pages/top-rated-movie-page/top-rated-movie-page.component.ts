@@ -2,35 +2,31 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { Movie } from '../../models/movie.model';
-import { MovieService } from '../../services/movie.service';
-import { takeUntil } from 'rxjs';
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 import { MovieComponent } from '../../components/movie/movie.component';
+import { Store } from '@ngrx/store';
+import { selectTopRatedMovies } from '../../store/selectors';
+import { loadTopRatedMovies } from '../../store/actions';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-top-rated-movie-page',
   standalone: true,
   templateUrl: './top-rated-movie-page.component.html',
   styleUrl: './top-rated-movie-page.component.scss',
-  imports: [HeaderComponent, MovieListComponent, MovieComponent],
+  imports: [HeaderComponent, MovieListComponent, MovieComponent, AsyncPipe],
 })
 export class TopRatedMoviePageComponent
   extends ClearObservableDirective
   implements OnInit
 {
-  topRatedMovies: Movie[] | null = null;
+  selectedMovies$ = this.store.select(selectTopRatedMovies);
 
-  constructor(private movieService: MovieService) {
+  constructor(private store: Store) {
     super();
   }
 
   ngOnInit(): void {
-    this.movieService
-      .getMoviesByCategory('top_rated')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        this.topRatedMovies = data.results;
-      });
+    this.store.dispatch(loadTopRatedMovies());
   }
 }

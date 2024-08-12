@@ -40,23 +40,22 @@
         <ng-template pTemplate="footer">
             @if(favBtns){
             <div class="footer__favAndWatch">
-                <p-button (onClick)="deleteFavorite()" icon="pi pi-times" severity="danger"
+                <p-button (onClick)="onUpdateFavorites(data.id)" icon="pi pi-times" severity="danger"
                     pTooltip="Delete from favorite" tooltipPosition="top" />
             </div>
             } @else if(watchBtns) {
             <div class="footer__favAndWatch">
-                <p-button (onClick)="deleteWatchList()" icon="pi pi-times" severity="danger"
+                <p-button (onClick)="onUpdateWatchList(data.id)" icon="pi pi-times" severity="danger"
                     pTooltip="Delete from watch list" tooltipPosition="top" />
             </div>
             }@else {
             <div class="flex gap-3 mt-1">
-                <p-button (onClick)="changeToFavorites()" [icon]="data.isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"
-                    severity="primary" [raised]="true"
-                    [pTooltip]="data.isFavorite ? 'Delete from favorite' :  'Add to favorite'" tooltipPosition="top" />
-                <p-button (onClick)="changeToWatching()" [icon]="data.isInWatchingList ? 'pi pi-check' : 'pi pi-eye'"
+                <p-button (onClick)="onUpdateFavorites(data.id)"
+                    [icon]="isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'" severity="primary" [raised]="true"
+                    [pTooltip]="isFavorite ? 'Delete from favorite' :  'Add to favorite'" tooltipPosition="top" />
+                <p-button (onClick)="onUpdateWatchList(data.id)" [icon]="isInWatchList ? 'pi pi-check' : 'pi pi-eye'"
                     severity="secondary" [raised]="true"
-                    [pTooltip]="data.isInWatchingList ? 'Delete from watch list' : 'Add to watch list'"
-                    tooltipPosition="top" />
+                    [pTooltip]="isInWatchList ? 'Delete from watch list' : 'Add to watch list'" tooltipPosition="top" />
             </div>
             }
         </ng-template>
