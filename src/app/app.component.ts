@@ -11,7 +11,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { AuthService } from './services/auth.service';
 import { MovieService } from './services/movie.service';
 import { Store } from '@ngrx/store';
-import { loadFavoritesMovies } from './store/actions';
+import { loadFavoritesMovies, loadWatchLaterMovies } from './store/actions';
 
 @Component({
   selector: 'app-root',
@@ -44,6 +44,7 @@ export class AppComponent implements OnInit {
         console.log('Session ID:', sessionId);
         if (accountId && sessionId) {
           this.store.dispatch(loadFavoritesMovies());
+          this.store.dispatch(loadWatchLaterMovies());
         }
       },
       (error) => {
