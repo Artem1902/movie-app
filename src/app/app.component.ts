@@ -40,7 +40,7 @@ export class AppComponent implements OnInit {
       ({ accountId, sessionId }) => {
         this.movieService.setAccountId(accountId);
         this.movieService.setSessionId(sessionId);
-
+        console.log(sessionId);
         if (accountId && sessionId) {
           this.store.dispatch(loadFavoritesMovies());
           this.store.dispatch(loadWatchLaterMovies());
