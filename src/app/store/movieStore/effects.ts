@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, of, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
-import { MovieService } from '../services/movie.service';
+import { MovieService } from '../../services/movie.service';
 import {
-  loadFavoritesMovies,
+  loadFavoritesMovies, loadFavoritesMoviesFailure,
   loadFavoritesMoviesSuccess,
   loadNowPlayingMovies,
   loadNowPlayingMoviesFailure,
@@ -96,6 +96,7 @@ export class MovieEffects {
       }),
     );
   });
+
   loadFavoritesMovies$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(loadFavoritesMovies),
@@ -109,7 +110,7 @@ export class MovieEffects {
             ];
           }),
           switchMap((actions) => actions),
-          catchError((error) => of(loadNowPlayingMoviesFailure({ error }))),
+          catchError((error) => of(loadFavoritesMoviesFailure({ error }))),
         );
       }),
     );

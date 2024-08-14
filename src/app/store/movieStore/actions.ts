@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAction, props } from '@ngrx/store';
-import { Movie } from '../models/movie.model';
+import { Movie } from '../../models/movie.model';
 
 // ============NOW-PLAYING=================================
 export const loadNowPlayingMovies = createAction(

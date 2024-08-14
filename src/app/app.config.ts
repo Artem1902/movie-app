@@ -8,16 +8,21 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { MovieReducer } from './store/reducer';
-import { MovieEffects } from './store/effects';
+import {appEffects, appStore} from "./store";
+
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(BrowserAnimationsModule),
     provideHttpClient(),
-    provideStore({ movies: MovieReducer }),
-    provideEffects([MovieEffects]),
+    provideStore(appStore),
+    provideEffects(appEffects),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
   ],
 };
+
+
+
+

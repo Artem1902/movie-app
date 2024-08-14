@@ -2,28 +2,24 @@
 import { Injectable } from '@angular/core';
 import { DetailsMovie, Movie, MovieAppModel } from '../models/movie.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import {catchError, combineLatest, map, Observable, switchMap, take, throwError} from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { Store } from '@ngrx/store';
+import {selectAccountId, selectSessionId} from "../store/authStore/selectors";
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  accountId: number | null = null;
-  sessionId: string | null = null;
+  accountId$ = this.store.select(selectAccountId);
+  sessionId$ = this.store.select(selectSessionId);
 
   constructor(
     private httpClient: HttpClient,
     private store: Store,
   ) {}
 
-  setAccountId(id: number) {
-    this.accountId = id;
-  }
-  setSessionId(id: string) {
-    this.sessionId = id;
-  }
+
   getNowPlayingMovies(): Observable<MovieAppModel> {
     return this.httpClient
       .get<MovieAppModel>(
@@ -52,74 +48,105 @@ export class MovieService {
       )
       .pipe(catchError(this.handleError));
   }
-  getFavoriteMoviesList(): Observable<Movie[]> {
-    if (!this.accountId || !this.sessionId) {
-      return throwError('Not authenticated');
-    }
 
-    const url = `${environment.apiUrl}/account/${this.accountId}/favorite/movies${environment.apiKey}&session_id=${this.sessionId}`;
-    return this.httpClient
-      .get<MovieAppModel>(url)
-      .pipe(map((res) => res.results))
-      .pipe(catchError(this.handleError));
+  getFavoriteMoviesList(): Observable<Movie[]> {
+    return combineLatest([this.accountId$, this.sessionId$]).pipe(
+      take(1),
+      switchMap(([accountId, sessionId]) => {
+        if (accountId && sessionId) {
+          const url = `${environment.apiUrl}/account/${accountId}/favorite/movies${environment.apiKey}&session_id=${sessionId}`;
+          return this.httpClient
+            .get<MovieAppModel>(url)
+            .pipe(
+              map((res) => res.results),
+              catchError(this.handleError)
+            );
+        } else {
+          return throwError('Not authenticated');
+        }
+      })
+    );
   }
   getWatchLaterMoviesList(): Observable<Movie[]> {
-    if (!this.accountId || !this.sessionId) {
-      return throwError('Not authenticated');
-    }
-
-    const url = `${environment.apiUrl}/account/${this.accountId}/watchlist/movies${environment.apiKey}&session_id=${this.sessionId}`;
-    return this.httpClient
-      .get<MovieAppModel>(url)
-      .pipe(map((res) => res.results))
-      .pipe(catchError(this.handleError));
+    return combineLatest([this.accountId$, this.sessionId$]).pipe(
+      take(1),
+      switchMap(([accountId, sessionId]) => {
+        if (accountId && sessionId) {
+          const url = `${environment.apiUrl}/account/${accountId}/watchlist/movies${environment.apiKey}&session_id=${sessionId}`;
+          return this.httpClient
+            .get<MovieAppModel>(url)
+            .pipe(
+              map((res) => res.results),
+              catchError(this.handleError)
+            );
+        } else {
+          return throwError('Not authenticated');
+        }
+      })
+    );
   }
+
   updateFavorites(id: number, isFavorite: boolean) {
-    if (!this.accountId || !this.sessionId) {
-      return throwError('Not authenticated');
-    }
+    return combineLatest([this.accountId$, this.sessionId$]).pipe(
+      take(1),
+      switchMap(([accountId, sessionId]) => {
+        if (accountId && sessionId) {
+          const url = `${environment.apiUrl}/account/${accountId}/favorite?session_id=${sessionId}`;
 
-    const url = `${environment.apiUrl}/account/${this.accountId}/favorite?session_id=${this.sessionId}`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${environment.apiToken}`,
-    });
+          const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${environment.apiToken}`,
+          });
 
-    const body = {
-      media_type: 'movie',
-      media_id: id,
-      favorite: !isFavorite,
-    };
-    return this.httpClient.post<any>(url, body, { headers }).pipe(
-      catchError((error) => {
-        console.error('Response from API:', error);
-        return throwError(error);
-      }),
+          const body = {
+            media_type: 'movie',
+            media_id: id,
+            favorite: !isFavorite,
+          };
+
+          return this.httpClient.post<any>(url, body, { headers }).pipe(
+            catchError((error) => {
+              console.error('Response from API:', error);
+              return throwError(error);
+            })
+          );
+        } else {
+          return throwError('Not authenticated');
+        }
+      })
     );
   }
 
   updateWatchList(id: number, isInWatchList: boolean) {
-    if (!this.accountId || !this.sessionId) {
-      return throwError('Not authenticated');
-    }
-    const url = `${environment.apiUrl}/account/${this.accountId}/watchlist?session_id=${this.sessionId}`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${environment.apiToken}`,
-    });
+    return combineLatest([this.accountId$, this.sessionId$]).pipe(
+      take(1),
+      switchMap(([accountId, sessionId]) => {
+        if (accountId && sessionId) {
+          const url = `${environment.apiUrl}/account/${accountId}/watchlist?session_id=${sessionId}`;
+          const headers = new HttpHeaders({
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${environment.apiToken}`,
+          });
 
-    const body = {
-      media_type: 'movie',
-      media_id: id,
-      watchlist: !isInWatchList,
-    };
-    return this.httpClient.post<any>(url, body, { headers }).pipe(
-      catchError((error) => {
-        console.error('Response from API:', error);
-        return throwError(error);
-      }),
+          const body = {
+            media_type: 'movie',
+            media_id: id,
+            watchlist: !isInWatchList,
+          };
+
+          return this.httpClient.post<any>(url, body, { headers }).pipe(
+            catchError((error) => {
+              console.error('Response from API:', error);
+              return throwError(error);
+            })
+          );
+        } else {
+          return throwError('Not authenticated');
+        }
+      })
     );
   }
+
 
   getDetailsMovie(id: number): Observable<DetailsMovie> {
     return this.httpClient

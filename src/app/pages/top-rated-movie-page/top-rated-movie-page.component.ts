@@ -5,8 +5,8 @@ import { MovieListComponent } from '../../components/movie-list/movie-list.compo
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { Store } from '@ngrx/store';
-import { selectTopRatedMovies } from '../../store/selectors';
-import { loadTopRatedMovies } from '../../store/actions';
+import { selectTopRatedMovies } from '../../store/movieStore/selectors';
+import { loadTopRatedMovies } from '../../store/movieStore/actions';
 import { AsyncPipe } from '@angular/common';
 
 @Component({

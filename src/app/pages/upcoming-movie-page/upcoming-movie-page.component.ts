@@ -6,9 +6,9 @@ import { MovieListComponent } from '../../components/movie-list/movie-list.compo
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { AsyncPipe } from '@angular/common';
-import { loadUpComingMovies } from '../../store/actions';
+import { loadUpComingMovies } from '../../store/movieStore/actions';
 import { Store } from '@ngrx/store';
-import { selectUpComingMovies } from '../../store/selectors';
+import { selectUpComingMovies } from '../../store/movieStore/selectors';
 
 @Component({
   selector: 'app-upcoming-movie-page',

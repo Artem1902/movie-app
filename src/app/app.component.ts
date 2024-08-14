@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import {
   RouterLink,
   RouterLinkActive,
-  RouterModule,
   RouterOutlet,
 } from '@angular/router';
 import { HeaderComponent } from './components/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
-import { AuthService } from './services/auth.service';
-import { MovieService } from './services/movie.service';
 import { Store } from '@ngrx/store';
-import { loadFavoritesMovies, loadWatchLaterMovies } from './store/actions';
+import { loadFavoritesMovies, loadWatchLaterMovies } from './store/movieStore/actions';
+import {tokenRequest} from "./store/authStore/actions";
+import {selectAccountId, selectSessionId} from "./store/authStore/selectors";
+import {combineLatest} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -21,7 +21,6 @@ import { loadFavoritesMovies, loadWatchLaterMovies } from './store/actions';
     HeaderComponent,
     FooterComponent,
     SidebarComponent,
-    RouterModule,
     RouterLink,
     RouterLinkActive,
   ],
@@ -30,25 +29,23 @@ import { loadFavoritesMovies, loadWatchLaterMovies } from './store/actions';
 })
 export class AppComponent implements OnInit {
   constructor(
-    public authService: AuthService,
-    private movieService: MovieService,
     private store: Store,
   ) {}
 
+  sessionId$ = this.store.select(selectSessionId);
+  accountId$ = this.store.select(selectAccountId);
+
+
   ngOnInit(): void {
-    this.authService.authenticateAndGetAccountId().subscribe(
-      ({ accountId, sessionId }) => {
-        this.movieService.setAccountId(accountId);
-        this.movieService.setSessionId(sessionId);
-        console.log(sessionId)
-        if (accountId && sessionId) {
-          this.store.dispatch(loadFavoritesMovies());
-          this.store.dispatch(loadWatchLaterMovies());
-        }
-      },
-      (error) => {
-        console.error('Authentication failed:', error);
-      },
-    );
+    this.store.dispatch(tokenRequest());
+
+    combineLatest([this.sessionId$, this.accountId$]).subscribe(([sessionId, accountId]) => {
+      if (sessionId && accountId) {
+        this.store.dispatch(loadFavoritesMovies());
+        this.store.dispatch(loadWatchLaterMovies());
+      }
+    });
   }
 }
+
+

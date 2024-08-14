@@ -10,11 +10,11 @@ import { Movie } from '../../models/movie.model';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { selectIsFavorite, selectIsInWatchLater } from '../../store/selectors';
+import { selectIsFavorite, selectIsInWatchLater } from '../../store/movieStore/selectors';
 import {
   updateFavoritesMovies,
   updateWatchLaterMovies,
-} from '../../store/actions';
+} from '../../store/movieStore/actions';
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({

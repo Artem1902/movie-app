@@ -3,8 +3,8 @@ import { Component } from '@angular/core';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { AsyncPipe } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { selectWatchLater } from '../../store/selectors';
-import { loadWatchLaterMovies } from '../../store/actions';
+import { selectWatchLater } from '../../store/movieStore/selectors';
+import { loadWatchLaterMovies } from '../../store/movieStore/actions';
 import { Observable } from 'rxjs';
 import { Movie } from '../../models/movie.model';
 

@@ -4,8 +4,8 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
 import { MovieComponent } from '../../components/movie/movie.component';
 import { Store } from '@ngrx/store';
-import { loadNowPlayingMovies } from '../../store/actions';
-import { selectNowPlayingMovies } from '../../store/selectors';
+import { loadNowPlayingMovies } from '../../store/movieStore/actions';
+import { selectNowPlayingMovies } from '../../store/movieStore/selectors';
 import { AsyncPipe } from '@angular/common';
 
 import { ClearObservableDirective } from '../../directives/clear-observable.directive';
