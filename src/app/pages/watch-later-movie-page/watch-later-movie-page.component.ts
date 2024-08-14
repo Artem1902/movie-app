@@ -1,21 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { MovieService } from '../../services/movie.service';
+import { AsyncPipe } from '@angular/common';
+import { Store } from '@ngrx/store';
+import { selectWatchLater } from '../../store/movieStore/selectors';
+import { loadWatchLaterMovies } from '../../store/movieStore/actions';
+import { Observable } from 'rxjs';
+import { Movie } from '../../models/movie.model';
 
 @Component({
   selector: 'app-watch-later-movie-page',
   standalone: true,
   templateUrl: './watch-later-movie-page.component.html',
   styleUrl: './watch-later-movie-page.component.scss',
-  imports: [MovieListComponent],
+  imports: [MovieListComponent, AsyncPipe],
 })
-export class WatchLaterMoviePageComponent implements OnInit {
-  watchLaterMovies: any = [];
-
-  constructor(private movieService: MovieService) {}
-
-  ngOnInit(): void {
-    this.watchLaterMovies = this.movieService.getWatchLater();
+export class WatchLaterMoviePageComponent {
+  selectedMovies$: Observable<Movie[]>;
+  constructor(private store: Store) {
+    this.selectedMovies$ = this.store.select(selectWatchLater);
+    this.store.dispatch(loadWatchLaterMovies());
   }
 }

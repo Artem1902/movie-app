@@ -1,12 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, UpperCasePipe } from '@angular/common';
 import { DateFormatPipe } from '../../pipes/date-format.pipe';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { MovieService } from '../../services/movie.service';
+import { Movie } from '../../models/movie.model';
+import { Router } from '@angular/router';
+import { takeUntil } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectIsFavorite, selectIsInWatchLater } from '../../store/movieStore/selectors';
+import {
+  updateFavoritesMovies,
+  updateWatchLaterMovies,
+} from '../../store/movieStore/actions';
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({
   selector: 'app-movie',
@@ -22,41 +31,51 @@ import { MovieService } from '../../services/movie.service';
   templateUrl: './movie.component.html',
   styleUrl: './movie.component.scss',
 })
-export class MovieComponent implements OnInit {
-  @Input() data: any;
+export class MovieComponent extends ClearObservableDirective implements OnInit {
+  @Input() data: Movie | undefined;
   @Input() favBtns: boolean = false;
   @Input() watchBtns: boolean = false;
 
-  @Output() redirectDetails = new EventEmitter<any>();
+  isFavorite: boolean = false;
+  isInWatchList: boolean = false;
 
-  constructor(private movieService: MovieService) {}
+  constructor(
+    private router: Router,
+    private store: Store,
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
-    if (!this.data.hasOwnProperty('isFavorite')) {
-      this.data.isFavorite = false;
+    if (this.data) {
+      this.store
+        .select(selectIsFavorite(this.data.id))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((res) => (this.isFavorite = res));
+      this.store
+        .select(selectIsInWatchLater(this.data.id))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((res) => (this.isInWatchList = res));
     }
-    if (!this.data.hasOwnProperty('isInWatchingList')) {
-      this.data.isInWatchingList = false;
-    }
-  }
-  changeToFavorites() {
-    if (this.data.isFavorite) {
-      this.movieService.deleteFromFavorites(this.data.id);
-    } else {
-      this.movieService.setToFavorites(this.data.id);
-    }
-    this.data.isFavorite = !this.data.isFavorite;
   }
 
-  changeToWatching() {
-    if (this.data.isInWatchingList) {
-      this.movieService.deleteFromWatchList(this.data.id);
-    } else {
-      this.movieService.setToWatchLater(this.data.id);
-    }
-    this.data.isInWatchingList = !this.data.isInWatchingList;
+  onUpdateFavorites(id: number) {
+    this.store.dispatch(
+      updateFavoritesMovies({ movie_id: id, isFavorite: this.isFavorite }),
+    );
   }
+  onUpdateWatchList(id: number) {
+    this.store.dispatch(
+      updateWatchLaterMovies({
+        movie_id: id,
+        isInWatchList: this.isInWatchList,
+      }),
+    );
+  }
+
   redirectToDetails() {
-    this.redirectDetails.emit(this.data.id);
+    if (this.data) {
+      this.router.navigate([`movie/${this.data.id}`]);
+    }
   }
 }

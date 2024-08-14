@@ -1,23 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, OnInit } from '@angular/core';
-import { MovieComponent } from '../../components/movie/movie.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { MovieListComponent } from '../../components/movie-list/movie-list.component';
-import { MovieService } from '../../services/movie.service';
+import { MovieComponent } from '../../components/movie/movie.component';
+import { Store } from '@ngrx/store';
+import { loadNowPlayingMovies } from '../../store/movieStore/actions';
+import { selectNowPlayingMovies } from '../../store/movieStore/selectors';
+import { AsyncPipe } from '@angular/common';
+
+import { ClearObservableDirective } from '../../directives/clear-observable.directive';
 
 @Component({
   selector: 'app-now-playing-movie-page',
   standalone: true,
   templateUrl: './now-playing-movie-page.component.html',
   styleUrl: './now-playing-movie-page.component.scss',
-  imports: [MovieComponent, HeaderComponent, MovieListComponent],
+  imports: [HeaderComponent, MovieListComponent, MovieComponent, AsyncPipe],
 })
-export class NowPlayingMoviePageComponent implements OnInit {
-  nowPlayingMovies: any = [];
+export class NowPlayingMoviePageComponent
+  extends ClearObservableDirective
+  implements OnInit
+{
+  selectedMovies$ = this.store.select(selectNowPlayingMovies);
 
-  constructor(private movieService: MovieService) {}
+  constructor(private store: Store) {
+    super();
+  }
 
-  ngOnInit(): void {
-    this.nowPlayingMovies = this.movieService.getNowPlayingMovies();
+  ngOnInit() {
+    this.store.dispatch(loadNowPlayingMovies());
   }
 }

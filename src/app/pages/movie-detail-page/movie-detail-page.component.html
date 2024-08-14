@@ -1,3 +1,4 @@
+@if(findedMovieDetails){
 <div class="details-card">
     <img class="details-card__image" [alt]="findedMovieDetails.title"
         [src]="'https://image.tmdb.org/t/p/w500/' + findedMovieDetails.poster_path" />
@@ -10,3 +11,6 @@
         <p>{{findedMovieDetails.overview}}</p>
     </div>
 </div>
+} @else{
+<h2>Movie is not find</h2>
+}
