@@ -1,4 +1,3 @@
-import {RequestTokenResponseInterface} from "../../models/auth.model";
 import {createAction, props} from "@ngrx/store";
 
 // ============TOKEN-REQUEST=================================
